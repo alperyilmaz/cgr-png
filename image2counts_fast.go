@@ -3,9 +3,9 @@ package main
 import (
 	"bytes"
 	"fmt"
+        //"log"
 	"os"
 	"strconv"
-	"strings"
 	"sync"
         "math"
 
@@ -18,7 +18,10 @@ var bytePool = sync.Pool{
 	},
 }
 
+//var logger = log.New(log.Writer(), "coordToSeq: ", log.LstdFlags)
+
 func main() {
+        //logger.Println("Starting main")
         if len(os.Args) < 2 {
                 fmt.Println("No filename provided. Please provide image filename.")
                 return
@@ -57,40 +60,19 @@ func log2(x float64) int {
 }
 
 func coordToSeq(x, y, base int) string {
-	xarr := bytePool.Get().([]byte)
-	yarr := bytePool.Get().([]byte)
-	defer func() {
-		bytePool.Put(xarr)
-		bytePool.Put(yarr)
-	}()
-
-	strconv.AppendInt(xarr, int64(x), 2)
-	strconv.AppendInt(yarr, int64(y), 2)
-
-	zeros := strings.Repeat("0", base)
-	xLen := len(xarr)
-	yLen := len(yarr)
-	if xLen > base {
-		xarr = xarr[xLen-base:]
-	} else {
-		xarr = append([]byte(zeros[:base-xLen]), xarr...)
-	}
-	if yLen > base {
-		yarr = yarr[yLen-base:]
-	} else {
-		yarr = append([]byte(zeros[:base-yLen]), yarr...)
-	}
-
+	xstr := fmt.Sprintf("%0"+strconv.Itoa(base)+"b", x)
+	ystr := fmt.Sprintf("%0"+strconv.Itoa(base)+"b", y)
+        //logger.Printf("x=%d, xstr=%s, y=%d, ystr=%s", x, xstr, y, ystr)
 	seq := make([]byte, base)
 	for i := 0; i < base; i++ {
-		if xarr[i] == '0' {
-			if yarr[i] == '0' {
+		if xstr[i] == '0' {
+			if ystr[i] == '0' {
 				seq[i] = 'A'
 			} else {
 				seq[i] = 'C'
 			}
 		} else {
-			if yarr[i] == '0' {
+			if ystr[i] == '0' {
 				seq[i] = 'G'
 			} else {
 				seq[i] = 'T'
