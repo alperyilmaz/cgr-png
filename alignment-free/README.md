@@ -23,10 +23,10 @@ Otherwise please run the slower Python version
 ls *fasta | cut -f1 -d. | while read GENOME; do bash count_genome.sh $GENOME 12; done
 ```
 
-## Use NCC metric to calculate similarity for each possible pair of images
+## Use SSIM metric to calculate similarity for each possible pair of images
 
 ```bash
-bash compare_images.sh NCC > compare_all_NCC_results
+bash compare_images_ssim.sh > ssim_12mer_results
 ```
 
 ## Prepare distance/similarity matrix from results
